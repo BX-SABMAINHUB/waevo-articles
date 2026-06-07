@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waevo Articles - Centro de Soporte</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --text: #0f172a;
+            --text-secondary: #475569;
+            --primary: #2563eb;
+            --primary-light: #dbeafe;
+            --border: #e2e8f0;
+            --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.04);
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .logo i { font-size: 1.8rem; }
+        .search-bar {
+            flex: 1;
+            max-width: 400px;
+            margin: 0 2rem;
+            position: relative;
+        }
+        .search-bar input {
+            width: 100%;
+            padding: 0.7rem 1rem 0.7rem 2.5rem;
+            border: 1px solid var(--border);
+            border-radius: 2rem;
+            font-size: 0.95rem;
+            background: var(--bg);
+            transition: all 0.2s;
+        }
+        .search-bar input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+        .search-bar i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        /* Main */
+        .main {
+            flex: 1;
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            width: 100%;
+        }
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .hero p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .articles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+        .article-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: var(--shadow);
+        }
+        .article-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+        .article-card h2 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+        .article-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .article-card img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: var(--radius-sm);
+            margin-bottom: 0.75rem;
+        }
+        .article-meta {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 1rem;
+        }
+
+        /* Article view */
+        .article-full {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .article-full img {
+            max-width: 100%;
+            border-radius: var(--radius-sm);
+            margin: 1rem 0;
+        }
+        .article-full h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        .article-full .desc {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            line-height: 1.7;
+            white-space: pre-wrap;
+        }
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Botón "+" oculto */
+        .admin-trigger {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0.25;
+            transition: all 0.3s;
+            z-index: 200;
+        }
+        .admin-trigger:hover {
+            opacity: 1;
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+        .modal h3 {
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+        .modal input, .modal textarea {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            margin-bottom: 0.8rem;
+            font-family: inherit;
+        }
+        .modal textarea { min-height: 100px; resize: vertical; }
+        .modal button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            margin-right: 0.5rem;
+        }
+        .modal button.secondary {
+            background: var(--bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .error-msg { color: #dc2626; font-size: 0.85rem; margin-bottom: 0.5rem; }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <div class="header-content">
+        <a href="/" class="logo">
+            <i class="fas fa-book-open"></i> Waevo Articles
+        </a>
+        <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Buscar artículos..." oninput="filterArticles()">
+        </div>
+    </div>
+</header>
+
+<main class="main" id="main-content">
+    <!-- Contenido dinámico -->
+</main>
+
+<!-- Botón "+" oculto -->
+<div class="admin-trigger" id="adminTrigger" title="Administración">+</div>
+
+<!-- Modal de contraseña -->
+<div class="modal-overlay" id="passwordModal">
+    <div class="modal">
+        <h3>Acceso de administrador</h3>
+        <input type="password" id="adminPassword" placeholder="Contraseña">
+        <div class="error-msg" id="passwordError"></div>
+        <button onclick="checkAdminPassword()">Acceder</button>
+        <button class="secondary" onclick="closePasswordModal()">Cancelar</button>
+    </div>
+</div>
+
+<!-- Modal de creación de artículo -->
+<div class="modal-overlay" id="articleModal">
+    <div class="modal">
+        <h3>Crear nuevo artículo</h3>
+        <input type="text" id="articleTitle" placeholder="Título del artículo">
+        <textarea id="articleDesc" placeholder="Descripción / Contenido"></textarea>
+        <input type="url" id="articleImage" placeholder="URL de la imagen (opcional)">
+        <div class="error-msg" id="articleError"></div>
+        <button onclick="createArticle()">Publicar artículo</button>
+        <button class="secondary" onclick="closeArticleModal()">Cancelar</button>
+    </div>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getDatabase, ref, push, onValue, set, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyD13N4-9MjTrmlPwGP7mves0Exje4v2ACw",
+        authDomain: "kahoot-8529e.firebaseapp.com",
+        databaseURL: "https://kahoot-8529e-default-rtdb.firebaseio.com",
+        projectId: "kahoot-8529e",
+        storageBucket: "kahoot-8529e.firebasestorage.app",
+        messagingSenderId: "313414356056",
+        appId: "1:313414356056:web:4aab4587f7df9393008e2d",
+        measurementId: "G-8T4CPC1BQ3"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    window.db = db;
+    window.dbRef = ref;
+    window.dbPush = push;
+    window.dbOnValue = onValue;
+    window.dbSet = set;
+    window.dbGet = get;
+    window.dbReady = true;
+
+    // Cargar artículos
+    loadArticles();
+</script>
+
+<script>
+    let articles = [];
+    let currentView = 'list'; // list | article | notfound
+
+    // Cargar artículos desde Firebase
+    function loadArticles() {
+        const main = document.getElementById('main-content');
+        main.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Cargando artículos...</div>';
+
+        const articlesRef = window.dbRef(window.db, 'articles');
+        window.dbOnValue(articlesRef, (snapshot) => {
+            const data = snapshot.val();
+            articles = data ? Object.entries(data).map(([id, val]) => ({ id, ...val })) : [];
+            // Ordenar por fecha descendente
+            articles.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+            handleRouting();
+        });
+    }
+
+    // Enrutamiento SPA
+    function handleRouting() {
+        const path = window.location.pathname;
+        const match = path.match(/^\/articles\/(.+)\/([a-zA-Z0-9]{6})$/);
+        if (match) {
+            const slug = match[1];
+            const id = match[2];
+            const article = articles.find(a => a.id === id && a.slug === slug);
+            if (article) {
+                renderArticle(article);
+                currentView = 'article';
+            } else {
+                renderNotFound();
+                currentView = 'notfound';
+            }
+        } else {
+            renderList(articles);
+            currentView = 'list';
+        }
+    }
+
+    // Renderizar lista
+    function renderList(arts) {
+        const main = document.getElementById('main-content');
+        if (arts.length === 0) {
+            main.innerHTML = `
+                <div class="hero">
+                    <h1>Centro de Soporte</h1>
+                    <p>Encuentra respuestas a tus preguntas más frecuentes.</p>
+                </div>
+                <div class="loading">No hay artículos publicados aún.</div>
+            `;
+            return;
+        }
+        const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
+        const filtered = arts.filter(a => 
+            a.title.toLowerCase().includes(searchTerm) || 
+            a.description.toLowerCase().includes(searchTerm)
+        );
+
+        main.innerHTML = `
+            <div class="hero">
+                <h1>Centro de Soporte</h1>
+                <p>Encuentra respuestas a tus preguntas más frecuentes.</p>
+            </div>
+            <div class="articles-grid">
+                ${filtered.map(a => `
+                    <div class="article-card" onclick="navigateToArticle('${a.slug}', '${a.id}')">
+                        ${a.image ? `<img src="${a.image}" alt="${a.title}" loading="lazy">` : ''}
+                        <h2>${a.title}</h2>
+                        <p>${a.description}</p>
+                        <div class="article-meta">ID: ${a.id}</div>
+                    </div>
+                `).join('')}
+            </div>
+            ${filtered.length === 0 ? '<div class="loading">No se encontraron artículos.</div>' : ''}
+        `;
+    }
+
+    // Renderizar artículo completo
+    function renderArticle(article) {
+        const main = document.getElementById('main-content');
+        document.title = `${article.title} - Waevo Articles`;
+        main.innerHTML = `
+            <div class="article-full">
+                <div class="back-btn" onclick="navigateToList()">
+                    <i class="fas fa-arrow-left"></i> Volver al centro de soporte
+                </div>
+                ${article.image ? `<img src="${article.image}" alt="${article.title}">` : ''}
+                <h1>${article.title}</h1>
+                <div class="desc">${article.description}</div>
+                <div class="article-meta">ID del artículo: ${article.id}</div>
+            </div>
+        `;
+    }
+
+    function renderNotFound() {
+        const main = document.getElementById('main-content');
+        main.innerHTML = `
+            <div class="hero">
+                <h1>Artículo no encontrado</h1>
+                <p>El artículo que buscas no existe o ha sido eliminado.</p>
+                <a href="/" class="back-btn" onclick="navigateToList(); return false;">
+                    <i class="fas fa-arrow-left"></i> Volver al centro de soporte
+                </a>
+            </div>
+        `;
+    }
+
+    // Navegación sin recargar
+    function navigateToArticle(slug, id) {
+        const url = `/articles/${slug}/${id}`;
+        window.history.pushState({}, '', url);
+        handleRouting();
+    }
+
+    function navigateToList() {
+        window.history.pushState({}, '', '/');
+        document.title = 'Waevo Articles - Centro de Soporte';
+        handleRouting();
+    }
+
+    // Búsqueda
+    function filterArticles() {
+        if (currentView === 'list') {
+            renderList(articles);
+        }
+    }
+
+    // Manejar botones de navegador (atrás/adelante)
+    window.addEventListener('popstate', () => {
+        handleRouting();
+    });
+
+    // --- Admin ---
+    document.getElementById('adminTrigger').addEventListener('click', () => {
+        document.getElementById('passwordModal').classList.add('active');
+        document.getElementById('adminPassword').value = '';
+        document.getElementById('passwordError').textContent = '';
+    });
+
+    function closePasswordModal() {
+        document.getElementById('passwordModal').classList.remove('active');
+    }
+
+    function checkAdminPassword() {
+        const pw = document.getElementById('adminPassword').value;
+        if (pw === 'waevoa') {
+            document.getElementById('passwordModal').classList.remove('active');
+            document.getElementById('articleModal').classList.add('active');
+            document.getElementById('articleTitle').value = '';
+            document.getElementById('articleDesc').value = '';
+            document.getElementById('articleImage').value = '';
+            document.getElementById('articleError').textContent = '';
+        } else {
+            document.getElementById('passwordError').textContent = 'Contraseña incorrecta.';
+        }
+    }
+
+    function closeArticleModal() {
+        document.getElementById('articleModal').classList.remove('active');
+    }
+
+    async function createArticle() {
+        const title = document.getElementById('articleTitle').value.trim();
+        const description = document.getElementById('articleDesc').value.trim();
+        const image = document.getElementById('articleImage').value.trim();
+
+        if (!title || !description) {
+            document.getElementById('articleError').textContent = 'El título y la descripción son obligatorios.';
+            return;
+        }
+
+        // Generar ID único de 6 caracteres
+        const id = generateShortId();
+        const slug = title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '').substring(0, 60);
+
+        const articleData = {
+            title,
+            description,
+            image: image || null,
+            id,
+            slug,
+            createdAt: Date.now()
+        };
+
+        try {
+            await window.dbSet(window.dbRef(window.db, `articles/${id}`), articleData);
+            document.getElementById('articleModal').classList.remove('active');
+            navigateToArticle(slug, id);
+        } catch (error) {
+            document.getElementById('articleError').textContent = 'Error al publicar: ' + error.message;
+        }
+    }
+
+    function generateShortId() {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let result = '';
+        for (let i = 0; i < 6; i++) {
+            result += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return result;
+    }
+
+    // Cerrar modales al hacer clic fuera
+    document.getElementById('passwordModal').addEventListener('click', function(e) {
+        if (e.target === this) closePasswordModal();
+    });
+    document.getElementById('articleModal').addEventListener('click', function(e) {
+        if (e.target === this) closeArticleModal();
+    });
+</script>
+
+</body>
+</html>
