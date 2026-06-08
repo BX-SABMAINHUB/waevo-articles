@@ -13,6 +13,9 @@
             --text-secondary: #475569;
             --primary: #2563eb;
             --primary-light: #dbeafe;
+            --danger: #dc2626;
+            --danger-light: #fecaca;
+            --success: #16a34a;
             --border: #e2e8f0;
             --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
             --shadow-md: 0 4px 6px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.04);
@@ -32,7 +35,6 @@
             flex-direction: column;
         }
 
-        /* Header */
         .header {
             background: var(--surface);
             border-bottom: 1px solid var(--border);
@@ -87,7 +89,6 @@
             color: var(--text-secondary);
         }
 
-        /* Main */
         .main {
             flex: 1;
             max-width: 1200px;
@@ -99,14 +100,8 @@
             text-align: center;
             margin-bottom: 3rem;
         }
-        .hero h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-        }
-        .hero p {
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-        }
+        .hero h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .hero p { color: var(--text-secondary); font-size: 1.1rem; }
 
         .articles-grid {
             display: grid;
@@ -126,11 +121,7 @@
             box-shadow: var(--shadow-md);
             transform: translateY(-2px);
         }
-        .article-card h2 {
-            font-size: 1.25rem;
-            margin-bottom: 0.5rem;
-            color: var(--text);
-        }
+        .article-card h2 { font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--text); }
         .article-card p {
             color: var(--text-secondary);
             font-size: 0.95rem;
@@ -146,13 +137,8 @@
             border-radius: var(--radius-sm);
             margin-bottom: 0.75rem;
         }
-        .article-meta {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            margin-top: 1rem;
-        }
+        .article-meta { font-size: 0.8rem; color: var(--text-secondary); margin-top: 1rem; }
 
-        /* Article view */
         .article-full {
             background: var(--surface);
             border: 1px solid var(--border);
@@ -162,21 +148,9 @@
             max-width: 800px;
             margin: 0 auto;
         }
-        .article-full img {
-            max-width: 100%;
-            border-radius: var(--radius-sm);
-            margin: 1rem 0;
-        }
-        .article-full h1 {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
-        .article-full .desc {
-            color: var(--text-secondary);
-            font-size: 1.05rem;
-            line-height: 1.7;
-            white-space: pre-wrap;
-        }
+        .article-full img { max-width: 100%; border-radius: var(--radius-sm); margin: 1rem 0; }
+        .article-full h1 { font-size: 2rem; margin-bottom: 1rem; }
+        .article-full .desc { color: var(--text-secondary); font-size: 1.05rem; line-height: 1.7; white-space: pre-wrap; }
         .back-btn {
             display: inline-flex;
             align-items: center;
@@ -188,7 +162,6 @@
             cursor: pointer;
         }
 
-        /* Botón "+" oculto y botón "tt" */
         .admin-trigger {
             position: fixed;
             bottom: 1.5rem;
@@ -209,18 +182,9 @@
             transition: all 0.3s;
             z-index: 200;
         }
-        .admin-trigger:hover {
-            opacity: 1;
-            color: var(--primary);
-            border-color: var(--primary);
-        }
-        .tt-trigger {
-            bottom: 5rem;
-            font-size: 0.85rem;
-            font-weight: 700;
-        }
+        .admin-trigger:hover { opacity: 1; color: var(--primary); border-color: var(--primary); }
+        .tt-trigger { bottom: 5rem; font-size: 0.85rem; font-weight: 700; }
 
-        /* Botón Ticket */
         .ticket-btn {
             display: block;
             width: 100%;
@@ -237,13 +201,25 @@
             transition: all 0.2s;
             box-shadow: var(--shadow-md);
         }
-        .ticket-btn:hover {
-            background: #1d4ed8;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-        }
+        .ticket-btn:hover { background: #1d4ed8; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); }
 
-        /* Modal */
+        .my-tickets-btn {
+            display: block;
+            width: 100%;
+            max-width: 400px;
+            margin: 1rem auto;
+            padding: 0.8rem 2rem;
+            background: var(--surface);
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            border-radius: 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .my-tickets-btn:hover { background: var(--primary-light); }
+
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -263,10 +239,7 @@
             max-width: 500px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.15);
         }
-        .modal h3 {
-            margin-bottom: 1rem;
-            font-size: 1.3rem;
-        }
+        .modal h3 { margin-bottom: 1rem; font-size: 1.3rem; }
         .modal input, .modal textarea {
             width: 100%;
             padding: 0.7rem 1rem;
@@ -294,13 +267,8 @@
         }
         .error-msg { color: #dc2626; font-size: 0.85rem; margin-bottom: 0.5rem; }
 
-        .loading {
-            text-align: center;
-            padding: 3rem;
-            color: var(--text-secondary);
-        }
+        .loading { text-align: center; padding: 3rem; color: var(--text-secondary); }
 
-        /* Estilos del chat */
         .chat-container {
             background: var(--surface);
             border: 1px solid var(--border);
@@ -325,31 +293,11 @@
             font-size: 0.95rem;
             line-height: 1.4;
         }
-        .chat-msg.user {
-            align-self: flex-end;
-            background: var(--primary);
-            color: white;
-            border-bottom-right-radius: 0;
-        }
-        .chat-msg.admin {
-            align-self: flex-start;
-            background: #f1f5f9;
-            border-bottom-left-radius: 0;
-        }
-        .chat-msg img {
-            max-width: 200px;
-            border-radius: 8px;
-            margin-top: 0.5rem;
-        }
-        .chat-sender {
-            font-weight: 700;
-            font-size: 0.8rem;
-            margin-bottom: 0.2rem;
-        }
-        .chat-input-row {
-            display: flex;
-            gap: 0.5rem;
-        }
+        .chat-msg.user { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 0; }
+        .chat-msg.admin { align-self: flex-start; background: #f1f5f9; border-bottom-left-radius: 0; }
+        .chat-msg img { max-width: 200px; border-radius: 8px; margin-top: 0.5rem; }
+        .chat-sender { font-weight: 700; font-size: 0.8rem; margin-bottom: 0.2rem; }
+        .chat-input-row { display: flex; gap: 0.5rem; }
         .chat-input-row input {
             flex: 1;
             padding: 0.7rem 1rem;
@@ -375,8 +323,39 @@
             margin-bottom: 0.8rem;
             cursor: pointer;
             transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
         .ticket-list-item:hover { box-shadow: var(--shadow-md); }
+        .ticket-list-item .info { flex: 1; }
+        .ticket-list-item .status-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .status-open { background: #dbeafe; color: #1e40af; }
+        .status-closed { background: #f1f5f9; color: #64748b; }
+        .close-ticket-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 0.4rem 1rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-left: 0.5rem;
+        }
+        .closed-notice {
+            background: #f1f5f9;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 0.8rem;
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -439,7 +418,7 @@
 <!-- Firebase SDK -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getDatabase, ref, push, onValue, set, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    import { getDatabase, ref, push, onValue, set, get, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyD13N4-9MjTrmlPwGP7mves0Exje4v2ACw",
@@ -461,20 +440,19 @@
     window.dbOnValue = onValue;
     window.dbSet = set;
     window.dbGet = get;
+    window.dbUpdate = update;
     window.dbReady = true;
 
-    // Cargar artículos
     loadArticles();
 </script>
 
 <script>
     let articles = [];
-    let currentView = 'list'; // list | article | ticketForm | ticketChat | adminTickets | adminTicketChat | notfound
+    let currentView = 'list';
     let currentTicketId = null;
     let isTicketAdmin = false;
     let tickets = [];
 
-    // Cargar artículos desde Firebase
     function loadArticles() {
         const main = document.getElementById('main-content');
         main.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Cargando artículos...</div>';
@@ -488,12 +466,12 @@
         });
     }
 
-    // Enrutamiento SPA
     function handleRouting() {
         const path = window.location.pathname;
         const articleMatch = path.match(/^\/articles\/(.+)\/([a-zA-Z0-9]{6})$/);
         const ticketNewMatch = path.match(/^\/support\/waevo\/new$/);
         const ticketViewMatch = path.match(/^\/support\/waevo\/([a-zA-Z0-9]{6})$/);
+        const myTicketsMatch = path.match(/^\/my-tickets$/);
 
         if (articleMatch) {
             const slug = articleMatch[1];
@@ -510,17 +488,18 @@
             renderTicketForm();
             currentView = 'ticketForm';
         } else if (ticketViewMatch) {
-            const ticketId = ticketViewMatch[1];
-            currentTicketId = ticketId;
-            renderTicketChat(ticketId);
+            currentTicketId = ticketViewMatch[1];
+            renderTicketChat(currentTicketId);
             currentView = 'ticketChat';
+        } else if (myTicketsMatch) {
+            renderMyTickets();
+            currentView = 'myTickets';
         } else {
             renderList(articles);
             currentView = 'list';
         }
     }
 
-    // Renderizar lista de artículos con botón Ticket
     function renderList(arts) {
         const main = document.getElementById('main-content');
         const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
@@ -554,17 +533,18 @@
             `;
         }
 
-        // Botón Ticket grande
         html += `
             <button class="ticket-btn" onclick="openTicketForm()">
                 <i class="fas fa-ticket-alt"></i> Ticket
+            </button>
+            <button class="my-tickets-btn" onclick="openMyTickets()">
+                <i class="fas fa-history"></i> Mis tickets
             </button>
         `;
 
         main.innerHTML = html;
     }
 
-    // Renderizar artículo completo
     function renderArticle(article) {
         const main = document.getElementById('main-content');
         document.title = `${article.title} - Waevo Articles`;
@@ -597,6 +577,11 @@
     // --- TICKETS ---
     function openTicketForm() {
         window.history.pushState({}, '', '/support/waevo/new');
+        handleRouting();
+    }
+
+    function openMyTickets() {
+        window.history.pushState({}, '', '/my-tickets');
         handleRouting();
     }
 
@@ -640,7 +625,8 @@
 
         try {
             await window.dbSet(window.dbRef(window.db, `tickets/${ticketId}`), ticketData);
-            // Redirigir al chat del ticket
+            // Guardar en localStorage
+            saveTicketToLocal(ticketId);
             window.history.pushState({}, '', `/support/waevo/${ticketId}`);
             currentTicketId = ticketId;
             renderTicketChat(ticketId);
@@ -648,6 +634,64 @@
         } catch (error) {
             document.getElementById('ticketError').textContent = 'Error al crear ticket: ' + error.message;
         }
+    }
+
+    function saveTicketToLocal(ticketId) {
+        const myTickets = JSON.parse(localStorage.getItem('myTickets') || '[]');
+        if (!myTickets.includes(ticketId)) {
+            myTickets.push(ticketId);
+            localStorage.setItem('myTickets', JSON.stringify(myTickets));
+        }
+    }
+
+    function getMyTicketsFromLocal() {
+        return JSON.parse(localStorage.getItem('myTickets') || '[]');
+    }
+
+    async function renderMyTickets() {
+        const main = document.getElementById('main-content');
+        const localIds = getMyTicketsFromLocal();
+        if (localIds.length === 0) {
+            main.innerHTML = `
+                <div class="back-btn" onclick="navigateToList()"><i class="fas fa-arrow-left"></i> Volver</div>
+                <h3>Mis tickets</h3>
+                <p>No has creado ningún ticket en este dispositivo.</p>
+            `;
+            return;
+        }
+
+        main.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Cargando tickets...</div>';
+
+        const ticketsRef = window.dbRef(window.db, 'tickets');
+        const snapshot = await window.dbGet(ticketsRef);
+        const allTickets = snapshot.val() || {};
+        const myTickets = localIds
+            .filter(id => allTickets[id])
+            .map(id => ({ id, ...allTickets[id] }))
+            .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+        main.innerHTML = `
+            <div class="back-btn" onclick="navigateToList()"><i class="fas fa-arrow-left"></i> Volver</div>
+            <h3>Mis tickets</h3>
+            ${myTickets.length === 0 ? '<p>No se encontraron tickets.</p>' : ''}
+            ${myTickets.map(t => `
+                <div class="ticket-list-item" onclick="openTicketFromList('${t.id}')">
+                    <div class="info">
+                        <strong>${t.title}</strong>
+                        <p style="margin:0.3rem 0; color:var(--text-secondary);">${t.problem.substring(0, 100)}...</p>
+                        <small>ID: ${t.id} | ${new Date(t.createdAt).toLocaleString()}</small>
+                    </div>
+                    <span class="status-badge ${t.status === 'open' ? 'status-open' : 'status-closed'}">${t.status === 'open' ? 'Abierto' : 'Cerrado'}</span>
+                </div>
+            `).join('')}
+        `;
+    }
+
+    function openTicketFromList(ticketId) {
+        window.history.pushState({}, '', `/support/waevo/${ticketId}`);
+        currentTicketId = ticketId;
+        renderTicketChat(ticketId);
+        currentView = 'ticketChat';
     }
 
     function renderTicketChat(ticketId) {
@@ -658,8 +702,9 @@
                     <i class="fas fa-arrow-left"></i> Volver
                 </div>
                 <h3>Ticket: <span id="ticketTitleDisplay">Cargando...</span></h3>
+                <div id="ticketStatusArea"></div>
                 <div class="chat-messages" id="chatMessages"></div>
-                <div class="chat-input-row">
+                <div class="chat-input-row" id="chatInputRow">
                     <input type="text" id="chatInput" placeholder="Escribe un mensaje...">
                     <button onclick="sendTicketMessage()"><i class="fas fa-paper-plane"></i></button>
                 </div>
@@ -675,6 +720,15 @@
             const data = snapshot.val();
             if (data) {
                 document.getElementById('ticketTitleDisplay').textContent = data.title;
+                const statusArea = document.getElementById('ticketStatusArea');
+                const chatInputRow = document.getElementById('chatInputRow');
+                if (data.status === 'closed') {
+                    statusArea.innerHTML = '<div class="closed-notice"><i class="fas fa-lock"></i> Este ticket ha sido cerrado. No se pueden enviar más mensajes.</div>';
+                    if (chatInputRow) chatInputRow.style.display = 'none';
+                } else {
+                    statusArea.innerHTML = '';
+                    if (chatInputRow) chatInputRow.style.display = 'flex';
+                }
             }
         });
     }
@@ -706,6 +760,14 @@
         const input = document.getElementById('chatInput');
         const text = input.value.trim();
         if (!text || !currentTicketId) return;
+
+        // Verificar que el ticket está abierto
+        const ticketRef = window.dbRef(window.db, `tickets/${currentTicketId}`);
+        const snap = await window.dbGet(ticketRef);
+        if (snap.exists() && snap.val().status === 'closed') {
+            alert('Este ticket está cerrado. No se pueden enviar mensajes.');
+            return;
+        }
 
         const sender = isTicketAdmin ? 'admin' : 'user';
         const senderName = isTicketAdmin ? 'Asistente de Alex' : 'Ticket user';
@@ -748,26 +810,39 @@
         main.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Cargando tickets...</div>';
 
         const ticketsRef = window.dbRef(window.db, 'tickets');
-        window.dbGet(ticketsRef).then(snapshot => {
-            const data = snapshot.val();
-            tickets = data ? Object.entries(data).map(([id, val]) => ({ id, ...val })) : [];
-            tickets.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+        const snapshot = await window.dbGet(ticketsRef);
+        const data = snapshot.val();
+        tickets = data ? Object.entries(data).map(([id, val]) => ({ id, ...val })) : [];
+        tickets.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
 
-            main.innerHTML = `
-                <div class="back-btn" onclick="navigateToList()">
-                    <i class="fas fa-arrow-left"></i> Volver
-                </div>
-                <h3>Tickets de soporte (Admin)</h3>
-                ${tickets.length === 0 ? '<p>No hay tickets.</p>' : ''}
-                ${tickets.map(t => `
-                    <div class="ticket-list-item" onclick="openAdminTicketChat('${t.id}')">
+        main.innerHTML = `
+            <div class="back-btn" onclick="navigateToList()">
+                <i class="fas fa-arrow-left"></i> Volver
+            </div>
+            <h3>Tickets de soporte (Admin)</h3>
+            ${tickets.length === 0 ? '<p>No hay tickets.</p>' : ''}
+            ${tickets.map(t => `
+                <div class="ticket-list-item">
+                    <div class="info" onclick="openAdminTicketChat('${t.id}')">
                         <strong>${t.title}</strong>
                         <p style="margin:0.3rem 0; color:var(--text-secondary);">${t.problem.substring(0, 100)}...</p>
                         <small>ID: ${t.id} | ${new Date(t.createdAt).toLocaleString()}</small>
                     </div>
-                `).join('')}
-            `;
-        });
+                    <span class="status-badge ${t.status === 'open' ? 'status-open' : 'status-closed'}">${t.status === 'open' ? 'Abierto' : 'Cerrado'}</span>
+                    ${t.status === 'open' ? `<button class="close-ticket-btn" onclick="event.stopPropagation(); closeTicket('${t.id}')">Cerrar</button>` : ''}
+                </div>
+            `).join('')}
+        `;
+    }
+
+    async function closeTicket(ticketId) {
+        if (!confirm('¿Estás seguro de que quieres cerrar este ticket?')) return;
+        try {
+            await window.dbUpdate(window.dbRef(window.db, `tickets/${ticketId}`), { status: 'closed' });
+            renderAdminTicketList();
+        } catch (error) {
+            alert('Error al cerrar ticket: ' + error.message);
+        }
     }
 
     function openAdminTicketChat(ticketId) {
@@ -784,15 +859,26 @@
                     <i class="fas fa-arrow-left"></i> Volver a lista
                 </div>
                 <h3>Ticket: <span id="ticketTitleDisplay">Cargando...</span></h3>
+                <div id="ticketStatusArea"></div>
                 <div class="chat-messages" id="chatMessages"></div>
-                <div class="chat-input-row">
+                <div class="chat-input-row" id="chatInputRow">
                     <input type="text" id="chatInput" placeholder="Escribe un mensaje...">
                     <button onclick="sendTicketMessage()"><i class="fas fa-paper-plane"></i></button>
                 </div>
+                <div style="margin-top:1rem; display:flex; gap:0.5rem;" id="adminActions"></div>
             </div>
         `;
         loadTicketData(ticketId);
         listenTicketMessages(ticketId);
+        // Cargar botón de cerrar si está abierto
+        const ticketRef = window.dbRef(window.db, `tickets/${ticketId}`);
+        window.dbGet(ticketRef).then(snap => {
+            if (snap.exists() && snap.val().status === 'open') {
+                document.getElementById('adminActions').innerHTML = `
+                    <button class="close-ticket-btn" onclick="closeTicket('${ticketId}')">Cerrar ticket</button>
+                `;
+            }
+        });
     }
 
     // --- Funciones comunes ---
