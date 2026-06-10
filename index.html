@@ -16,6 +16,7 @@
             --danger: #dc2626;
             --danger-light: #fecaca;
             --success: #16a34a;
+            --warning: #d97706;
             --border: #e2e8f0;
             --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
             --shadow-md: 0 4px 6px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.04);
@@ -296,8 +297,19 @@
         .chat-msg.user { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 0; }
         .chat-msg.admin { align-self: flex-start; background: #f1f5f9; border-bottom-left-radius: 0; }
         .chat-msg img { max-width: 200px; border-radius: 8px; margin-top: 0.5rem; }
+        .chat-msg .link-bar {
+            display: inline-block;
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.5rem;
+            margin-top: 0.4rem;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+        }
         .chat-sender { font-weight: 700; font-size: 0.8rem; margin-bottom: 0.2rem; }
-        .chat-input-row { display: flex; gap: 0.5rem; }
+        .chat-input-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
         .chat-input-row input {
             flex: 1;
             padding: 0.7rem 1rem;
@@ -313,6 +325,9 @@
             height: 44px;
             border-radius: 50%;
             cursor: pointer;
+        }
+        .chat-input-row button.link-btn {
+            background: var(--warning);
         }
 
         .ticket-list-item {
@@ -347,6 +362,16 @@
             cursor: pointer;
             margin-left: 0.5rem;
         }
+        .ban-user-btn {
+            background: #b91c1c;
+            color: white;
+            border: none;
+            padding: 0.4rem 1rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-left: 0.5rem;
+        }
         .closed-notice {
             background: #f1f5f9;
             border: 1px solid var(--border);
@@ -355,6 +380,25 @@
             text-align: center;
             color: var(--text-secondary);
             margin-bottom: 1rem;
+        }
+        .user-id-badge {
+            position: fixed;
+            bottom: 1.5rem;
+            left: 1.5rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 2rem;
+            padding: 0.4rem 1rem;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            box-shadow: var(--shadow);
+            z-index: 50;
+        }
+        .image-preview {
+            max-width: 100px;
+            max-height: 100px;
+            border-radius: var(--radius-sm);
+            margin-top: 0.5rem;
         }
     </style>
 </head>
@@ -375,6 +419,9 @@
 <main class="main" id="main-content">
     <!-- Contenido dinámico -->
 </main>
+
+<!-- ID de usuario -->
+<div class="user-id-badge" id="user-id-badge">ID: ---</div>
 
 <!-- Botones flotantes -->
 <div class="admin-trigger" id="adminTrigger" title="Crear artículo">+</div>
@@ -415,6 +462,17 @@
     </div>
 </div>
 
+<!-- Modal de confirmación antes de crear ticket -->
+<div class="modal-overlay" id="confirmTicketModal">
+    <div class="modal">
+        <h3 id="confirmStepTitle">Confirmación de uso responsable</h3>
+        <p id="confirmStepText">¿Estás seguro de que necesitas crear un ticket de soporte?</p>
+        <div class="error-msg" id="confirmError"></div>
+        <button onclick="nextConfirmStep()">Sí, continuar</button>
+        <button class="secondary" onclick="closeConfirmModal()">Cancelar</button>
+    </div>
+</div>
+
 <!-- Firebase SDK -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -444,14 +502,28 @@
     window.dbReady = true;
 
     loadArticles();
+    initUserId();
 </script>
 
 <script>
+    // ID de usuario único de 7 dígitos numéricos
+    let currentUserId = null;
+    function initUserId() {
+        let stored = localStorage.getItem('waevo_user_id');
+        if (!stored) {
+            stored = Math.floor(1000000 + Math.random() * 9000000).toString();
+            localStorage.setItem('waevo_user_id', stored);
+        }
+        currentUserId = stored;
+        document.getElementById('user-id-badge').textContent = 'ID: ' + currentUserId;
+    }
+
     let articles = [];
     let currentView = 'list';
     let currentTicketId = null;
     let isTicketAdmin = false;
     let tickets = [];
+    let confirmStep = 0;
 
     function loadArticles() {
         const main = document.getElementById('main-content');
@@ -485,8 +557,8 @@
                 currentView = 'notfound';
             }
         } else if (ticketNewMatch) {
-            renderTicketForm();
-            currentView = 'ticketForm';
+            // Iniciar confirmaciones antes de mostrar formulario
+            startTicketConfirmation();
         } else if (ticketViewMatch) {
             currentTicketId = ticketViewMatch[1];
             renderTicketChat(currentTicketId);
@@ -574,10 +646,45 @@
         `;
     }
 
-    // --- TICKETS ---
+    // --- TICKETS CON CONFIRMACIONES ---
     function openTicketForm() {
-        window.history.pushState({}, '', '/support/waevo/new');
-        handleRouting();
+        confirmStep = 0;
+        document.getElementById('confirmTicketModal').classList.add('active');
+        updateConfirmStep();
+    }
+
+    function updateConfirmStep() {
+        const titleEl = document.getElementById('confirmStepTitle');
+        const textEl = document.getElementById('confirmStepText');
+        const errorEl = document.getElementById('confirmError');
+        errorEl.textContent = '';
+        if (confirmStep === 0) {
+            titleEl.textContent = 'Confirmación de uso responsable (1/3)';
+            textEl.textContent = 'Este sistema de tickets es solo para soporte técnico. ¿Es realmente un problema con los servicios de Waevo?';
+        } else if (confirmStep === 1) {
+            titleEl.textContent = 'Confirmación de uso responsable (2/3)';
+            textEl.textContent = 'Los tickets inapropiados, falsos o que no sean de soporte técnico pueden resultar en el baneo permanente de su cuenta. ¿Aún deseas continuar?';
+        } else if (confirmStep === 2) {
+            titleEl.textContent = 'Última confirmación (3/3)';
+            textEl.textContent = 'Al enviar este ticket, aceptas que tu ID de usuario (' + currentUserId + ') quedará registrado. Cualquier uso indebido conllevará sanciones. ¿Crear ticket?';
+        }
+    }
+
+    function nextConfirmStep() {
+        confirmStep++;
+        if (confirmStep >= 3) {
+            document.getElementById('confirmTicketModal').classList.remove('active');
+            window.history.pushState({}, '', '/support/waevo/new');
+            renderTicketForm();
+            currentView = 'ticketForm';
+        } else {
+            updateConfirmStep();
+        }
+    }
+
+    function closeConfirmModal() {
+        document.getElementById('confirmTicketModal').classList.remove('active');
+        navigateToList();
     }
 
     function openMyTickets() {
@@ -588,14 +695,18 @@
     function renderTicketForm() {
         const main = document.getElementById('main-content');
         main.innerHTML = `
-            <div class="modal" style="max-width:500px; margin:0 auto; box-shadow:var(--shadow-md);">
+            <div class="modal" style="max-width:550px; margin:0 auto; box-shadow:var(--shadow-md);">
                 <div class="back-btn" onclick="navigateToList()">
                     <i class="fas fa-arrow-left"></i> Volver
                 </div>
                 <h3>Crear ticket de soporte</h3>
+                <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:1rem;">Tu ID: <strong>${currentUserId}</strong></p>
                 <input type="text" id="ticketTitle" placeholder="Título del ticket">
                 <textarea id="ticketProblem" placeholder="Describe tu problema..."></textarea>
-                <input type="url" id="ticketImage" placeholder="URL de la imagen (opcional)">
+                <label style="display:block; margin-bottom:0.5rem; font-weight:500;">Imagen (desde tu dispositivo):</label>
+                <input type="file" id="ticketImageFile" accept="image/*" onchange="previewTicketImage()">
+                <img id="ticketImagePreview" class="image-preview" style="display:none;">
+                <input type="url" id="ticketImageUrl" placeholder="O pega URL de la imagen (opcional)">
                 <div class="error-msg" id="ticketError"></div>
                 <button onclick="createTicket()">Enviar ticket</button>
                 <button class="secondary" onclick="navigateToList()">Cancelar</button>
@@ -603,14 +714,37 @@
         `;
     }
 
+    function previewTicketImage() {
+        const file = document.getElementById('ticketImageFile').files[0];
+        const preview = document.getElementById('ticketImagePreview');
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
     async function createTicket() {
         const title = document.getElementById('ticketTitle').value.trim();
         const problem = document.getElementById('ticketProblem').value.trim();
-        const image = document.getElementById('ticketImage').value.trim();
+        const imageFile = document.getElementById('ticketImageFile').files[0];
+        const imageUrl = document.getElementById('ticketImageUrl').value.trim();
 
         if (!title || !problem) {
             document.getElementById('ticketError').textContent = 'El título y la descripción son obligatorios.';
             return;
+        }
+
+        let finalImage = imageUrl || null;
+        if (imageFile) {
+            finalImage = await new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.readAsDataURL(imageFile);
+            });
         }
 
         const ticketId = generateShortId();
@@ -618,14 +752,14 @@
             id: ticketId,
             title,
             problem,
-            image: image || null,
+            image: finalImage,
             createdAt: Date.now(),
-            status: 'open'
+            status: 'open',
+            userId: currentUserId
         };
 
         try {
             await window.dbSet(window.dbRef(window.db, `tickets/${ticketId}`), ticketData);
-            // Guardar en localStorage
             saveTicketToLocal(ticketId);
             window.history.pushState({}, '', `/support/waevo/${ticketId}`);
             currentTicketId = ticketId;
@@ -706,12 +840,21 @@
                 <div class="chat-messages" id="chatMessages"></div>
                 <div class="chat-input-row" id="chatInputRow">
                     <input type="text" id="chatInput" placeholder="Escribe un mensaje...">
+                    <button class="link-btn" onclick="attachLink()" title="Adjuntar enlace"><i class="fas fa-link"></i></button>
                     <button onclick="sendTicketMessage()"><i class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
         `;
         loadTicketData(ticketId);
         listenTicketMessages(ticketId);
+    }
+
+    function attachLink() {
+        const url = prompt('Introduce el enlace:');
+        if (url && url.trim()) {
+            const input = document.getElementById('chatInput');
+            input.value = input.value + ' ' + url.trim();
+        }
     }
 
     function loadTicketData(ticketId) {
@@ -745,14 +888,22 @@
     function renderChatMessages(messages) {
         const container = document.getElementById('chatMessages');
         if (!container) return;
-        container.innerHTML = messages.map(m => `
-            <div class="chat-msg ${m.sender === 'admin' ? 'admin' : 'user'}">
-                <div class="chat-sender">${m.senderName || (m.sender === 'admin' ? 'Asistente de Alex' : 'Ticket user')}</div>
-                <div>${m.text}</div>
-                ${m.image ? `<img src="${m.image}" alt="imagen">` : ''}
-                <div style="font-size:0.7rem; opacity:0.6; margin-top:0.3rem;">${new Date(m.timestamp).toLocaleString()}</div>
-            </div>
-        `).join('');
+        container.innerHTML = messages.map(m => {
+            let content = m.text || '';
+            // Convertir URLs en enlaces clickeables con estilo de barra azul
+            const urlRegex = /(https?:\/\/[^\s]+)/g;
+            content = content.replace(urlRegex, (url) => {
+                return `<a href="${url}" target="_blank" class="link-bar">${url}</a>`;
+            });
+            return `
+                <div class="chat-msg ${m.sender === 'admin' ? 'admin' : 'user'}">
+                    <div class="chat-sender">${m.senderName || (m.sender === 'admin' ? 'Asistente de Alex' : 'Ticket user')}</div>
+                    <div>${content}</div>
+                    ${m.image ? `<img src="${m.image}" alt="imagen">` : ''}
+                    <div style="font-size:0.7rem; opacity:0.6; margin-top:0.3rem;">${new Date(m.timestamp).toLocaleString()}</div>
+                </div>
+            `;
+        }).join('');
         container.scrollTop = container.scrollHeight;
     }
 
@@ -761,7 +912,6 @@
         const text = input.value.trim();
         if (!text || !currentTicketId) return;
 
-        // Verificar que el ticket está abierto
         const ticketRef = window.dbRef(window.db, `tickets/${currentTicketId}`);
         const snap = await window.dbGet(ticketRef);
         if (snap.exists() && snap.val().status === 'closed') {
@@ -826,10 +976,11 @@
                     <div class="info" onclick="openAdminTicketChat('${t.id}')">
                         <strong>${t.title}</strong>
                         <p style="margin:0.3rem 0; color:var(--text-secondary);">${t.problem.substring(0, 100)}...</p>
-                        <small>ID: ${t.id} | ${new Date(t.createdAt).toLocaleString()}</small>
+                        <small>ID: ${t.id} | Usuario: ${t.userId || '---'} | ${new Date(t.createdAt).toLocaleString()}</small>
                     </div>
                     <span class="status-badge ${t.status === 'open' ? 'status-open' : 'status-closed'}">${t.status === 'open' ? 'Abierto' : 'Cerrado'}</span>
                     ${t.status === 'open' ? `<button class="close-ticket-btn" onclick="event.stopPropagation(); closeTicket('${t.id}')">Cerrar</button>` : ''}
+                    ${t.userId ? `<button class="ban-user-btn" onclick="event.stopPropagation(); banUser('${t.userId}')">Banear</button>` : ''}
                 </div>
             `).join('')}
         `;
@@ -842,6 +993,20 @@
             renderAdminTicketList();
         } catch (error) {
             alert('Error al cerrar ticket: ' + error.message);
+        }
+    }
+
+    async function banUser(userId) {
+        if (!confirm(`¿Estás seguro de que quieres banear al usuario ${userId}? Será baneado permanentemente de todos los servicios Waevo.`)) return;
+        try {
+            await window.dbSet(window.dbRef(window.db, `bans/${userId}`), {
+                expiresAt: 9999999999999,
+                bannedBy: 'admin',
+                alias: 'Soporte Waevo'
+            });
+            alert('Usuario baneado exitosamente.');
+        } catch (error) {
+            alert('Error al banear: ' + error.message);
         }
     }
 
@@ -863,6 +1028,7 @@
                 <div class="chat-messages" id="chatMessages"></div>
                 <div class="chat-input-row" id="chatInputRow">
                     <input type="text" id="chatInput" placeholder="Escribe un mensaje...">
+                    <button class="link-btn" onclick="attachLink()" title="Adjuntar enlace"><i class="fas fa-link"></i></button>
                     <button onclick="sendTicketMessage()"><i class="fas fa-paper-plane"></i></button>
                 </div>
                 <div style="margin-top:1rem; display:flex; gap:0.5rem;" id="adminActions"></div>
@@ -870,7 +1036,6 @@
         `;
         loadTicketData(ticketId);
         listenTicketMessages(ticketId);
-        // Cargar botón de cerrar si está abierto
         const ticketRef = window.dbRef(window.db, `tickets/${ticketId}`);
         window.dbGet(ticketRef).then(snap => {
             if (snap.exists() && snap.val().status === 'open') {
@@ -983,6 +1148,9 @@
     });
     document.getElementById('ttPasswordModal').addEventListener('click', function(e) {
         if (e.target === this) closeTTPasswordModal();
+    });
+    document.getElementById('confirmTicketModal').addEventListener('click', function(e) {
+        if (e.target === this) closeConfirmModal();
     });
 </script>
 
